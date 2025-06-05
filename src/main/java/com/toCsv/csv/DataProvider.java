@@ -11,69 +11,87 @@ public class DataProvider {
     };
 
     public static List<Datas> getData() {
-        List<Datas> dataList = new ArrayList<>();
-        Random random = new Random();
-        LocalDate startDate = LocalDate.now().minusDays(100);
+    List<Datas> dataList = new ArrayList<>();
+    Random random = new Random();
+    LocalDate startDate = LocalDate.now().minusDays(100);
 
-        double prevTemp = random.nextDouble() * 15 - 5; // Start between -5 and +10
+    int daysInYear = 365;
+    double avgTemp = 10; // average yearly temperature
+    double amplitude = 15; // seasonal amplitude
 
-        for (int i = 0; i < 100; i++) {
-            LocalDate date = startDate.plusDays(i);
+    double prevTemp = avgTemp;
 
-            // Gradual temperature change
-            double tempChange = random.nextGaussian() * 2; // mean 0, stddev 2
-            double temp_min = Math.max(-20, Math.min(25, prevTemp + tempChange));
-            double temp_max = temp_min + 5 + random.nextDouble() * 10; // min+5 to min+15
+    for (int i = 0; i < 100; i++) {
+        LocalDate date = startDate.plusDays(i);
 
-            // Weather type based on temperature
-            String weather_type;
-            if (temp_max < 3) {
-                weather_type = random.nextDouble() < 0.7 ? "snowy" : WEATHER_TYPES[random.nextInt(WEATHER_TYPES.length)];
-            } else if (temp_min > 15) {
-                weather_type = random.nextDouble() < 0.7 ? "sunny" : WEATHER_TYPES[random.nextInt(WEATHER_TYPES.length)];
-            } else {
-                weather_type = WEATHER_TYPES[random.nextInt(WEATHER_TYPES.length)];
-            }
+        // Simulate seasonal temperature with sine wave
+        double season = Math.sin(2 * Math.PI * (date.getDayOfYear() / (double)daysInYear));
+        double baseTemp = avgTemp + amplitude * season;
 
-            // Precipitation based on weather type
-            double percipitation = 0;
-            switch (weather_type) {
-                case "sunny":
-                    percipitation = 0;
-                    break;
-                case "cloudy":
-                    percipitation = Math.round(random.nextDouble() * 10) / 10.0;
-                    break;
-                case "rainy":
-                    percipitation = Math.round((5 + random.nextDouble() * 45) * 10) / 10.0;
-                    break;
-                case "snowy":
-                    percipitation = Math.round((2 + random.nextDouble() * 18) * 10) / 10.0;
-                    break;
-                case "windy":
-                    percipitation = Math.round(random.nextDouble() * 5) / 10.0;
-                    break;
-                case "foggy":
-                    percipitation = Math.round(random.nextDouble() * 2) / 10.0;
-                    break;
-                case "stormy":
-                    percipitation = Math.round((10 + random.nextDouble() * 90) * 10) / 10.0;
-                    break;
-            }
+        // Add small daily random variation
+        double temp_min = baseTemp + random.nextGaussian() * 3 - 3;
+        double temp_max = temp_min + 5 + random.nextDouble() * 7; // min+5 to min+12
 
-            double wind = Math.round((1 + random.nextDouble() * 19) * 10.0) / 10.0;
-
-            dataList.add(new Datas(
-                date.toString(),
-                Math.round(temp_min * 10.0) / 10.0,
-                Math.round(temp_max * 10.0) / 10.0,
-                percipitation,
-                wind,
-                weather_type
-            ));
-
-            prevTemp = temp_min + random.nextDouble() * (temp_max - temp_min);
+        // Ensure temp_min < temp_max
+        if (temp_max < temp_min) {
+            double t = temp_min;
+            temp_min = temp_max;
+            temp_max = t;
         }
-        return dataList;
+
+        // Weather type based on temperature
+        String weather_type;
+        if (temp_max < 3) {
+            weather_type = random.nextDouble() < 0.8 ? "snowy" : "cloudy";
+        } else if (temp_min > 18) {
+            weather_type = random.nextDouble() < 0.7 ? "sunny" : "cloudy";
+        } else {
+            double r = random.nextDouble();
+            if (r < 0.4) weather_type = "cloudy";
+            else if (r < 0.6) weather_type = "rainy";
+            else if (r < 0.7) weather_type = "windy";
+            else if (r < 0.8) weather_type = "foggy";
+            else if (r < 0.9) weather_type = "stormy";
+            else weather_type = "sunny";
+        }
+
+        // Precipitation based on weather type
+        double percipitation = 0;
+        switch (weather_type) {
+            case "sunny":
+                percipitation = 0;
+                break;
+            case "cloudy":
+                percipitation = Math.round(random.nextDouble() * 2 * 10) / 10.0;
+                break;
+            case "rainy":
+                percipitation = Math.round((5 + random.nextDouble() * 15) * 10) / 10.0;
+                break;
+            case "snowy":
+                percipitation = Math.round((2 + random.nextDouble() * 8) * 10) / 10.0;
+                break;
+            case "windy":
+                percipitation = Math.round(random.nextDouble() * 2 * 10) / 10.0;
+                break;
+            case "foggy":
+                percipitation = Math.round(random.nextDouble() * 1 * 10) / 10.0;
+                break;
+            case "stormy":
+                percipitation = Math.round((10 + random.nextDouble() * 20) * 10) / 10.0;
+                break;
+        }
+
+        double wind = Math.round((2 + random.nextDouble() * (weather_type.equals("stormy") ? 18 : 10)) * 10.0) / 10.0;
+
+        dataList.add(new Datas(
+            date.toString(),
+            Math.round(temp_min * 10.0) / 10.0,
+            Math.round(temp_max * 10.0) / 10.0,
+            percipitation,
+            wind,
+            weather_type
+        ));
     }
+    return dataList;
+}
 }
