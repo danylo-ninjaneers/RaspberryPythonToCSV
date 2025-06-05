@@ -20,7 +20,7 @@ public class Main {
 
         try (FileWriter writer = new FileWriter(csvFile)) {
             // Write header
-            writer.write("date,temp_min,temp_max,percipitation,wind,weather_type\n");
+            //writer.write("date,temp_min,temp_max,percipitation,wind,weather_type\n");
             // Write data
             for (Datas d : lines) {
                 writer.write(String.format("%s,%.1f,%.1f,%.1f,%.1f,%s\n",
