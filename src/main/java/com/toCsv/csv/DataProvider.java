@@ -32,6 +32,9 @@ public class DataProvider {
         double temp_min = baseTemp + random.nextGaussian() * 3 - 3;
         double temp_max = temp_min + 5 + random.nextDouble() * 7; // min+5 to min+12
 
+        temp_min = Math.round(temp_min * 10.0) / 10.0;
+        temp_max = Math.round(temp_max * 10.0) / 10.0;
+
         // Ensure temp_min < temp_max
         if (temp_max < temp_min) {
             double t = temp_min;
