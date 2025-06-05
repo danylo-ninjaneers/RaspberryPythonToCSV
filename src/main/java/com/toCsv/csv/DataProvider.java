@@ -13,8 +13,8 @@ public class DataProvider {
     public static List<Datas> getData() {
     List<Datas> dataList = new ArrayList<>();
     Random random = new Random();
-    LocalDate startDate = LocalDate.of(2007, 4, 1);
-    LocalDate endDate = LocalDate.now();
+    LocalDate startDate = LocalDate.now();
+    LocalDate endDate = LocalDate.now().plusYears(10);
 
     int daysInYear = 365;
     double avgTemp = 10; // average yearly temperature
