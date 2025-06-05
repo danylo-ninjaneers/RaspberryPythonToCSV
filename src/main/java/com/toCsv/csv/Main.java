@@ -20,9 +20,7 @@ public class Main {
         List<Datas> lines = DataProvider.getData();
 
         try (FileWriter writer = new FileWriter(csvFile)) {
-            // Write header
-            //writer.write("date,temp_min,temp_max,percipitation,wind,weather_type\n");
-            // Write data
+
             for (Datas d : lines) {
                 writer.write(String.format(Locale.US, "%s,%.1f,%.1f,%.1f,%.1f,%s\n",
                 d.getDate(),
@@ -31,6 +29,14 @@ public class Main {
                 d.getPercipitation(),
                 d.getWind(),
                 d.getWeather_type()));
+
+                try{
+                    Thread.sleep(1000); // Simulate some delay for each write
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt(); // Restore interrupted status
+                    e.printStackTrace();
+                    break;
+                }
             }
             System.out.println("CSV file created successfully at " + csvFile);
         } catch (IOException e) {

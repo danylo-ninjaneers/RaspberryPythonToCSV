@@ -13,7 +13,8 @@ public class DataProvider {
     public static List<Datas> getData() {
     List<Datas> dataList = new ArrayList<>();
     Random random = new Random();
-    LocalDate startDate = LocalDate.now().minusDays(100);
+    LocalDate startDate = LocalDate.of(2007, 4, 1);
+    LocalDate endDate = LocalDate.now();
 
     int daysInYear = 365;
     double avgTemp = 10; // average yearly temperature
@@ -21,13 +22,9 @@ public class DataProvider {
 
     double prevTemp = avgTemp;
 
-    for (int i = 0; i < 100; i++) {
-        LocalDate date = startDate.plusDays(i);
-
-        // Simulate seasonal temperature with sine wave
+    for (LocalDate date = startDate; !date.isAfter(endDate); date = date.plusDays(1)) {
         double season = Math.sin(2 * Math.PI * (date.getDayOfYear() / (double)daysInYear));
         double baseTemp = avgTemp + amplitude * season;
-
         // Add small daily random variation
         double temp_min = baseTemp + random.nextGaussian() * 3 - 3;
         double temp_max = temp_min + 5 + random.nextDouble() * 7; // min+5 to min+12
