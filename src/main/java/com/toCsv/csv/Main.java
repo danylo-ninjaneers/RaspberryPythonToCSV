@@ -31,7 +31,7 @@ public class Main {
                 d.getWeather_type()));
 
                 try{
-                    Thread.sleep(1000); // Simulate some delay for each write
+                    Thread.sleep(5000); // Simulate some delay for each write
                 } catch (InterruptedException e) {
                     Thread.currentThread().interrupt(); // Restore interrupted status
                     e.printStackTrace();
